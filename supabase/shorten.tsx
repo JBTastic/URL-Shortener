@@ -3,14 +3,12 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const supabase = createClient(supabaseUrl, supabaseKey);
-// CORS Header
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey, x-client-info"
 };
 serve(async (req)=>{
-  // Preflight request
   if (req.method === "OPTIONS") {
     return new Response(null, {
       headers: corsHeaders
@@ -26,35 +24,43 @@ serve(async (req)=>{
         headers: corsHeaders
       });
     }
-    // Check if URL already exists
-    const { data } = await supabase.from("urls").select("slug").eq("original", url).single();
-    if (data) {
+    // Prüfen, ob URL schon existiert
+    const { data: existing, error: existingError } = await supabase.from("links").select("slug").eq("original_url", url).single();
+    if (existingError && existingError.code !== "PGRST116") {
+      // PGRST116 = no rows found, das ist ok
+      throw new Error(existingError.message);
+    }
+    if (existing) {
       return new Response(JSON.stringify({
-        slug: data.slug
+        slug: existing.slug
       }), {
         status: 200,
         headers: corsHeaders
       });
     }
-    // Generate unique slug
+    // Eindeutigen Slug generieren
     let slug;
     while(true){
       slug = Math.random().toString(36).substring(2, 8);
-      const { data: exists } = await supabase.from("urls").select("id").eq("slug", slug).single();
+      const { data: exists } = await supabase.from("links").select("id").eq("slug", slug).single();
       if (!exists) break;
     }
-    // Insert
-    await supabase.from("urls").insert({
-      original: url,
+    // Insert und gleich das Insert-Ergebnis zurückgeben
+    const { data: inserted, error: insertError } = await supabase.from("links").insert({
+      original_url: url,
       slug
-    });
+    }).select().single();
+    if (insertError || !inserted) {
+      throw new Error(insertError?.message || "Failed to insert URL");
+    }
     return new Response(JSON.stringify({
-      slug
+      slug: inserted.slug
     }), {
       status: 200,
       headers: corsHeaders
     });
   } catch (err) {
+    console.error("Edge Function Error:", err);
     return new Response(JSON.stringify({
       error: err.message
     }), {
