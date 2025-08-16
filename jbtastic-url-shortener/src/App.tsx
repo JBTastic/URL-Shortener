@@ -52,7 +52,7 @@ function App() {
         return;
       }
 
-      setShortUrl(`https://s.jbtastic.com/${slug}`);
+      setShortUrl(`https://s.jbtastic.com/?slug=${slug}`);
     } catch (err) {
       console.error(err);
       setError("Unexpected error while shortening URL");

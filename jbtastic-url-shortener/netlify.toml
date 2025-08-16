@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/:slug"
-  to = "/.netlify/functions/redirect?slug=:slug"
+  from = "/"
+  to = "/.netlify/functions/redirect"
   status = 200
   force = true
