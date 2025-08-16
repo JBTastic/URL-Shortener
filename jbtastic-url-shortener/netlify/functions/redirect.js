@@ -1,7 +1,7 @@
 export async function handler(event, context) {
   const slug = event.queryStringParameters.slug;
 
-  console.log(event.queryStringParameters);
+  console.log("Query Parameters:", event.queryStringParameters);
 
   if (!slug) {
     return {
