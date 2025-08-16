@@ -24,6 +24,8 @@ export async function handler(event, context) {
 
   const data = await response.json();
 
+  console.log("Data:", data);
+
   if (!data || data.length === 0) {
     return {
       statusCode: 404,
