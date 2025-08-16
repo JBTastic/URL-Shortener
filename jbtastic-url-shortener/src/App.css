@@ -1,3 +1,6 @@
+/* App.css */
+
+/* Basis-Styles für Desktop und Mobile */
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -9,31 +12,42 @@ body {
   align-items: center;
 }
 
-/* Center Content */
+/* Container */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
+  justify-content: center; /* Vertikal zentriert */
   text-align: center;
   gap: 10px;
+  min-height: 100vh; /* Ganze Höhe des Viewports */
+  padding: 20px;     /* Abstand zum Rand */
+  box-sizing: border-box;
 }
 
-/* Input Field and Button */
+/* Input & Button */
 input {
   width: 300px;
+  max-width: 90vw; /* Damit es auf kleinen Handys nicht rausläuft */
   padding: 10px;
   font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background-color: #1e1e1e;
+  color: #fff;
 }
 
 button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: var(--button-bg);
+  color: rgba(255,255,255,0.87);
 }
 
-/* Errormessage */
+/* Error Message */
 .error-text {
   color: red;
   margin-top: 5px;
@@ -54,4 +68,15 @@ button {
   animation: shake 0.3s;
   border: 2px solid red;
   outline: none;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2em; /* etwas größere Lesbarkeit auf Handy */
+  }
+  input, button {
+    font-size: 18px; /* größere Schrift */
+    padding: 12px;
+  }
 }
