@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputUrl, setInputUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    const trimmedUrl = inputUrl.trim();
+
+    // If input empty
+    if (!trimmedUrl) {
+      setError("Must not have empty URL!");
+      return;
+    }
+
+    // If URL doesn't start with https://
+    if (!trimmedUrl.startsWith("https://")) {
+      setError("URL must start with https://");
+      return;
+    }
+
+    // Wenn URL schon gekürzt wurde
+    if (shortUrl && trimmedUrl === inputUrl) {
+      setError("You already shortened this URL. Change the URL to shorten again.");
+      return;
+    }
+
+    setError("");
+
+    // TODO: Temporary URL generation, later to be replaced by Supabase
+    const slug = Math.random().toString(36).substring(2, 8);
+    setShortUrl(`https://s.jbtastic.com/${slug}`);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputUrl(e.target.value);
+    // Reset shortURL when input changes
+    if (shortUrl) setShortUrl("");
+    if (error) setError("");
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="container">
+      <h1>JBTastic URL Shortener</h1>
+      <input
+        type="url"
+        placeholder="Enter your URL here"
+        value={inputUrl}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
+        className={error ? "shake" : ""}
+      />
+      {error && <p className="error-text">{error}</p>}
+      <button onClick={handleSubmit}>Shorten URL</button>
+
+      {shortUrl && (
+        <div className="result">
+          <p>Your short URL:</p>
+          <a href={shortUrl} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
