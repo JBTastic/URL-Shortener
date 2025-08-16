@@ -33,7 +33,7 @@ export async function handler(event, context) {
     };
   }
 
-  const originalUrl = data[0].original_url;
+  const originalUrl = `${data[0].original_url}?`;
 
   return {
     statusCode: 302,
