@@ -14,7 +14,7 @@ export async function handler(event, context) {
   const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
   const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/short_urls?slug=eq.${slug}`, {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/links?slug=eq.${slug}`, {
     headers: {
       "apikey": SUPABASE_KEY,
       "Authorization": `Bearer ${SUPABASE_KEY}`,
