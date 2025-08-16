@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -24,10 +25,10 @@ serve(async (req)=>{
         headers: corsHeaders
       });
     }
-    // Prüfen, ob URL schon existiert
+    // Check if URL already exists
     const { data: existing, error: existingError } = await supabase.from("links").select("slug").eq("original_url", url).single();
     if (existingError && existingError.code !== "PGRST116") {
-      // PGRST116 = no rows found, das ist ok
+      // PGRST116 = no rows found, ok
       throw new Error(existingError.message);
     }
     if (existing) {
@@ -38,14 +39,14 @@ serve(async (req)=>{
         headers: corsHeaders
       });
     }
-    // Eindeutigen Slug generieren
+    // Generate unique slug
     let slug;
     while(true){
       slug = Math.random().toString(36).substring(2, 8);
       const { data: exists } = await supabase.from("links").select("id").eq("slug", slug).single();
       if (!exists) break;
     }
-    // Insert und gleich das Insert-Ergebnis zurückgeben
+    // Insert and return the insert result
     const { data: inserted, error: insertError } = await supabase.from("links").insert({
       original_url: url,
       slug

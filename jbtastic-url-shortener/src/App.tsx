@@ -42,7 +42,7 @@ function App() {
         return;
       }
 
-      // JSON-String in Objekt umwandeln
+      // Convert JSON string to object
       const parsed = JSON.parse(response.data);
       const { slug } = parsed;
 
